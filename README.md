@@ -1,5 +1,7 @@
 # Edge Addons API
 
+[![CI](https://github.com/inverse/python-edge-addons-api/actions/workflows/main.yml/badge.svg)](https://github.com/inverse/python-edge-addons-api/actions/workflows/main.yml)
+
 An API client for publishing addons to the Edge store.
 
 Based on the [PlasmHQ Edge Addons API](https://github.com/PlasmoHQ/edge-addons-api).
