@@ -1,17 +1,26 @@
 from edge_addons_api.client import Options, Client
 
 import os
+import sys
+
+
+if len(sys.argv) < 3:
+    print("You must provide file_path and notes")
+    sys.exit(1)
+
+file_path = sys.argv[1]
+notes = sys.argv[2]
 
 options = Options(
     product_id=os.environ["EDGE_PRODUCT_ID"],
     client_id=os.environ["EDGE_CLIENT_ID"],
     client_secret=os.environ["EDGE_CLIENT_SECRET"],
-    access_token_url=os.environ["EDGE_ACCES_TOKEN_URL"]
+    access_token_url=os.environ["EDGE_ACCESS_TOKEN_URL"]
 )
 
 client = Client(options)
 
 client.submit(
-    file_path="/path/to/extension.zip",
-    notes="Your upload notes"
+    file_path=file_path,
+    notes=notes
 )
