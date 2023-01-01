@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "edge-addons-api"
-version = "0.1.0"
+version = "0.2.0"
 description = "API client for uploading addons to the Edge store"
 authors = ["Malachi Soord <inverse.chi@gmail.com>"]
 license = "MIT"
