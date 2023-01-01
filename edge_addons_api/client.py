@@ -3,6 +3,8 @@ from os import path
 
 import requests
 
+from edge_addons_api.responses import SubmitResponse
+
 
 @dataclass
 class Options:
@@ -19,15 +21,17 @@ class Client:
     def __init__(self, options: Options):
         self.options = options
 
-    def submit(self, file_path: str, notes: str):
+    def submit(self, file_path: str, notes: str) -> SubmitResponse:
         if not path.exists(file_path):
             raise FileNotFoundError(f"Unable to locate file at {file_path}")
 
         access_token = self._get_access_token()
-        self._upload(file_path, access_token)
-        self._publish(notes, access_token)
+        upload = self._upload(file_path, access_token)
+        publish = self._publish(notes, access_token)
 
-    def _publish(self, notes: str, access_token: str):
+        return SubmitResponse(upload, publish)
+
+    def _publish(self, notes: str, access_token: str) -> dict:
         response = requests.post(
             self._publish_endpoint(),
             data={"notes": notes},
@@ -38,7 +42,9 @@ class Client:
 
         response.raise_for_status()
 
-    def _upload(self, file_path: str, access_token: str):
+        return response.json()
+
+    def _upload(self, file_path: str, access_token: str) -> dict:
 
         files = {"file": open(file_path, "rb")}
 
@@ -52,6 +58,8 @@ class Client:
         )
 
         response.raise_for_status()
+
+        return response.json()
 
     def _get_access_token(self) -> str:
         response = requests.post(
