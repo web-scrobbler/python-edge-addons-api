@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from os import path
 
 import requests
 
@@ -19,6 +20,9 @@ class Client:
         self.options = options
 
     def submit(self, file_path: str, notes: str):
+        if not path.exists(file_path):
+            raise FileNotFoundError(f"Unable to locate file at {file_path}")
+
         access_token = self._get_access_token()
         self._upload(file_path, access_token)
         self._publish(notes, access_token)
