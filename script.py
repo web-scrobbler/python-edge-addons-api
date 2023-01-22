@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 
@@ -9,6 +10,9 @@ if len(sys.argv) < 3:
 
 file_path = sys.argv[1]
 notes = sys.argv[2]
+
+logging.basicConfig()
+logging.getLogger().setLevel(logging.DEBUG)
 
 options = Options(
     product_id=os.environ["EDGE_PRODUCT_ID"],
