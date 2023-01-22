@@ -25,11 +25,14 @@ options = Options(
 
 client = Client(options)
 
-client.submit(
+# Upload extension
+operation_id = client.submit(
     file_path="/path/to/extension.zip",
     notes="Your upload notes"
 )
 
+# Check publish status
+client.fetch_publish_status(operation_id)
 ```
 
 ## License
