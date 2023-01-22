@@ -6,7 +6,6 @@ from os import path
 import requests
 
 from edge_addons_api.exceptions import UploadException
-from edge_addons_api.responses import SubmitResponse
 
 logger = logging.getLogger(__name__)
 
@@ -32,18 +31,28 @@ class Client:
     def __init__(self, options: Options):
         self.options = options
 
-    def submit(self, file_path: str, notes: str) -> SubmitResponse:
+    def submit(self, file_path: str, notes: str) -> str:
         if not path.exists(file_path):
             raise FileNotFoundError(f"Unable to locate file at {file_path}")
 
         access_token = self._get_access_token()
         operation_id = self._upload(file_path, access_token)
         self._check_upload(operation_id, access_token)
-        publish = self._publish(notes, access_token)
+        return self._publish(notes, access_token)
 
-        return SubmitResponse({}, publish)
+    def fetch_publish_status(self, operation_id: str) -> dict:
+        access_token = self._get_access_token()
+        response = requests.get(
+            self._publish_status_endpoint(operation_id),
+            headers={
+                "Authorization": f"Bearer {access_token}",
+            },
+        )
 
-    def _publish(self, notes: str, access_token: str) -> dict:
+        response.raise_for_status()
+        return response.json()
+
+    def _publish(self, notes: str, access_token: str) -> str:
         response = requests.post(
             self._publish_endpoint(),
             data={"notes": notes},
@@ -56,7 +65,7 @@ class Client:
 
         logger.debug(f"Publish response: {response.content.decode()}")
 
-        return response.json()
+        return response.headers["Location"]
 
     def _upload(self, file_path: str, access_token: str) -> str:
 
@@ -138,3 +147,6 @@ class Client:
 
     def _status_endpoint(self, operation_id: str) -> str:
         return f"{self._upload_endpoint()}/operations/{operation_id}"
+
+    def _publish_status_endpoint(self, operation_id: str) -> str:
+        return f"{self._publish_endpoint()}/operations/{operation_id}"
