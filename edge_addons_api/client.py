@@ -68,17 +68,15 @@ class Client:
         return response.headers["Location"]
 
     def _upload(self, file_path: str, access_token: str) -> str:
-
-        files = {"file": open(file_path, "rb")}
-
-        response = requests.post(
-            self._upload_endpoint(),
-            files=files,
-            headers={
-                "Authorization": f"Bearer {access_token}",
-                "Content-Type": "application/zip",
-            },
-        )
+        with open(file_path, "rb") as f:
+            response = requests.post(
+                self._upload_endpoint(),
+                data=f,
+                headers={
+                    "Authorization": f"Bearer {access_token}",
+                    "Content-Type": "application/zip",
+                },
+            )
 
         response.raise_for_status()
 
