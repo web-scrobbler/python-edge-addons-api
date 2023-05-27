@@ -68,7 +68,7 @@ class Client:
         return response.headers["Location"]
 
     def _upload(self, file_path: str, access_token: str) -> str:
-        with open(file_path, 'rb') as f:
+        with open(file_path, "rb") as f:
             response = requests.post(
                 self._upload_endpoint(),
                 data=f,
