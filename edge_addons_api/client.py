@@ -25,7 +25,6 @@ class Options:
 
 
 class Client:
-
     BASE_URL = "https://api.addons.microsoftedge.microsoft.com"
 
     def __init__(self, options: Options):
