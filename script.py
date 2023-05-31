@@ -14,6 +14,8 @@ notes = sys.argv[2]
 
 logging.basicConfig()
 logging.getLogger().setLevel(logging.DEBUG)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
+
 
 options = Options(
     product_id=os.environ["EDGE_PRODUCT_ID"],
@@ -27,7 +29,8 @@ client = Client(options)
 print("Submitting addon")
 
 try:
-    client.submit(file_path=file_path, notes=notes)
+    resp = client.submit(file_path=file_path, notes=notes)
+    client.fetch_publish_status(resp)
 
     print("Successfully uploaded addon")
 except UploadException as e:

@@ -41,6 +41,7 @@ class Client:
         return self._publish(notes, access_token)
 
     def fetch_publish_status(self, operation_id: str) -> dict:
+        logger.debug(f"Fetching publish status for {operation_id}")
         access_token = self._get_access_token()
         response = requests.get(
             self._publish_status_endpoint(operation_id),
@@ -50,9 +51,12 @@ class Client:
         )
 
         response.raise_for_status()
+
+        logger.debug(f"Publish status response: {response.content.decode()}")
         return response.json()
 
     def _publish(self, notes: str, access_token: str) -> str:
+        logger.debug("Publishing")
         response = requests.post(
             self._publish_endpoint(),
             data={"notes": notes},
@@ -68,6 +72,7 @@ class Client:
         return response.headers["Location"]
 
     def _upload(self, file_path: str, access_token: str) -> str:
+        logger.debug(f"Uploading {file_path}")
         with open(file_path, "rb") as f:
             response = requests.post(
                 self._upload_endpoint(),
@@ -80,6 +85,8 @@ class Client:
 
         response.raise_for_status()
 
+        logger.debug("Finished upload")
+
         return response.headers["Location"]
 
     def _check_upload(
@@ -89,6 +96,8 @@ class Client:
         retry_count: int = 5,
         sleep_seconds: int = 3,
     ) -> str:
+        logger.debug("Checking upload")
+
         upload_status = ""
         attempts = 0
 
