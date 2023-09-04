@@ -22,6 +22,8 @@ class Options:
     client_id: str
     client_secret: str
     access_token_url: str
+    retry_count: int = 10
+    sleep_seconds: int = 3
 
 
 class Client:
@@ -92,15 +94,16 @@ class Client:
         self,
         operation_id,
         access_token: str,
-        retry_count: int = 5,
-        sleep_seconds: int = 3,
     ) -> str:
         logger.debug("Checking upload")
 
         upload_status = ""
         attempts = 0
 
-        while upload_status != ResponseStatus.SUCCEEDED and attempts < retry_count:
+        while (
+            upload_status != ResponseStatus.SUCCEEDED
+            and attempts < self.options.retry_count
+        ):
             response = requests.get(
                 self._status_endpoint(operation_id),
                 headers={
@@ -121,7 +124,8 @@ class Client:
                     response_json["errors"],
                 )
             elif upload_status == ResponseStatus.IN_PROGRESS:
-                time.sleep(sleep_seconds)
+                time.sleep(self.options.sleep_seconds)
+                attempts += 1
 
         return upload_status
 
