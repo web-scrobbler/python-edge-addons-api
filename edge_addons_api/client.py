@@ -100,7 +100,10 @@ class Client:
         upload_status = ""
         attempts = 0
 
-        while upload_status != ResponseStatus.SUCCEEDED and attempts < self.options.retry_count:
+        while (
+            upload_status != ResponseStatus.SUCCEEDED
+            and attempts < self.options.retry_count
+        ):
             response = requests.get(
                 self._status_endpoint(operation_id),
                 headers={
