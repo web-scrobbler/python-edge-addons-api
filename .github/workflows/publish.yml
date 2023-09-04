@@ -19,7 +19,9 @@ jobs:
     - name: Install pip dependencies
       run: poetry install
     - name: Package
-      run: poetry build
+      run: |
+        poetry version ${{ github.event.release.tag_name }}
+        poetry build
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
