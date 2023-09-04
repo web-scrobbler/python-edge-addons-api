@@ -35,7 +35,7 @@ try:
     print("Successfully uploaded addon")
 except UploadException as e:
     print(f"Failed to upload: {e.status} - {e.error_code} - {e.message}")
-    print(f"Errors:")
+    print("Errors:")
     for error in e.errors:
         print(f"- {error['message']}")
 
