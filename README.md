@@ -19,7 +19,7 @@ from edge_addons_api.client import Options, Client
 options = Options(
     product_id="Your product ID",
     client_id="Your client ID",
-    client_secret="Your client secret",
+    api_key="Your API key",
     access_token_url="Your access token URL"
 )
 
