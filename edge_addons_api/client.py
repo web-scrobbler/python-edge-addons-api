@@ -20,8 +20,7 @@ class ResponseStatus:
 class Options:
     product_id: str
     client_id: str
-    client_secret: str
-    access_token_url: str
+    api_key: str
     retry_count: int = 10
     sleep_seconds: int = 3
 
@@ -36,19 +35,15 @@ class Client:
         if not path.exists(file_path):
             raise FileNotFoundError(f"Unable to locate file at {file_path}")
 
-        access_token = self._get_access_token()
-        operation_id = self._upload(file_path, access_token)
-        self._check_upload(operation_id, access_token)
-        return self._publish(notes, access_token)
+        operation_id = self._upload(file_path)
+        self._check_upload(operation_id)
+        return self._publish(notes)
 
     def fetch_publish_status(self, operation_id: str) -> dict:
         logger.debug(f"Fetching publish status for {operation_id}")
-        access_token = self._get_access_token()
         response = requests.get(
             self._publish_status_endpoint(operation_id),
-            headers={
-                "Authorization": f"Bearer {access_token}",
-            },
+            headers=self._publish_default_headers(),
         )
 
         response.raise_for_status()
@@ -56,14 +51,12 @@ class Client:
         logger.debug(f"Publish status response: {response.content.decode()}")
         return response.json()
 
-    def _publish(self, notes: str, access_token: str) -> str:
+    def _publish(self, notes: str) -> str:
         logger.debug("Publishing")
         response = requests.post(
             self._publish_endpoint(),
             data={"notes": notes},
-            headers={
-                "Authorization": f"Bearer {access_token}",
-            },
+            headers=self._publish_default_headers(),
         )
 
         response.raise_for_status()
@@ -72,15 +65,15 @@ class Client:
 
         return response.headers["Location"]
 
-    def _upload(self, file_path: str, access_token: str) -> str:
+    def _upload(self, file_path: str) -> str:
         logger.debug(f"Uploading {file_path}")
         with open(file_path, "rb") as f:
             response = requests.post(
                 self._upload_endpoint(),
                 data=f,
                 headers={
-                    "Authorization": f"Bearer {access_token}",
                     "Content-Type": "application/zip",
+                    **self._publish_default_headers(),
                 },
             )
 
@@ -93,7 +86,6 @@ class Client:
     def _check_upload(
         self,
         operation_id,
-        access_token: str,
     ) -> str:
         logger.debug("Checking upload")
 
@@ -106,9 +98,7 @@ class Client:
         ):
             response = requests.get(
                 self._status_endpoint(operation_id),
-                headers={
-                    "Authorization": f"Bearer {access_token}",
-                },
+                headers=self._publish_default_headers(),
             )
 
             response.raise_for_status()
@@ -129,23 +119,6 @@ class Client:
 
         return upload_status
 
-    def _get_access_token(self) -> str:
-        response = requests.post(
-            self.options.access_token_url,
-            data={
-                "client_id": self.options.client_id,
-                "scope": f"{self.BASE_URL}/.default",
-                "client_secret": self.options.client_secret,
-                "grant_type": "client_credentials",
-            },
-        )
-
-        response.raise_for_status()
-
-        json = response.json()
-
-        return json["access_token"]
-
     def _product_endpoint(self) -> str:
         return f"{self.BASE_URL}/v1/products/{self.options.product_id}"
 
@@ -160,3 +133,9 @@ class Client:
 
     def _publish_status_endpoint(self, operation_id: str) -> str:
         return f"{self._publish_endpoint()}/operations/{operation_id}"
+
+    def _publish_default_headers(self):
+        return {
+            "Authorization": f"ApiKey {self.options.api_key}",
+            "X-ClientID": self.options.client_id,
+        }

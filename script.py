@@ -20,8 +20,7 @@ logging.getLogger("urllib3").setLevel(logging.WARNING)
 options = Options(
     product_id=os.environ["EDGE_PRODUCT_ID"],
     client_id=os.environ["EDGE_CLIENT_ID"],
-    client_secret=os.environ["EDGE_CLIENT_SECRET"],
-    access_token_url=os.environ["EDGE_ACCESS_TOKEN_URL"],
+    api_key=os.environ["EDGE_API_KEY"],
 )
 
 client = Client(options)
