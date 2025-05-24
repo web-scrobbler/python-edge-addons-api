@@ -6,7 +6,7 @@ on:
 
 jobs:
   publish:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     environment: pypi
     permissions:
       id-token: write
@@ -27,4 +27,3 @@ jobs:
         poetry build
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
-
