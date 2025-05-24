@@ -1,6 +1,6 @@
 # Edge Addons API
 
-[![CI](https://github.com/inverse/python-edge-addons-api/actions/workflows/main.yml/badge.svg)](https://github.com/inverse/python-edge-addons-api/actions/workflows/main.yml)
+[![CI](https://github.com/web-scrobbler/python-edge-addons-api/actions/workflows/main.yml/badge.svg)](https://github.com/web-scrobbler/python-edge-addons-api/actions/workflows/main.yml)
 
 An API client for publishing addons to the Edge store.
 
@@ -20,7 +20,9 @@ options = Options(
     product_id="Your product ID",
     client_id="Your client ID",
     api_key="Your API key",
-    access_token_url="Your access token URL"
+    retry_count=5 # Retry attempts, default 5
+    sleep_seconds=3 # Sleep seconds between retries, default 3
+
 )
 
 client = Client(options)
