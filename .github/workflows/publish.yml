@@ -7,11 +7,14 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-20.04
+    environment: pypi
+    permissions:
+      id-token: write
     steps:
     - uses: actions/checkout@master
     - uses: actions/setup-python@v5
       with:
-        python-version: '3.11'
+        python-version: '3.13'
     - name: Install poetry
       uses: abatilo/actions-poetry@v4.0.0
       with:
@@ -24,5 +27,4 @@ jobs:
         poetry build
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        password: ${{ secrets.pypi_token }}
+
