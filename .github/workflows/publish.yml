@@ -13,13 +13,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: jdx/mise-action@v2
-    - name: Cache pre-commit environment
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/pre-commit
-        key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
-        restore-keys: |
-          pre-commit-${{ runner.os }}-
     - uses: actions/cache@v4
       with:
         path: ~/.local/share/virtualenvs

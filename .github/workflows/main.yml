@@ -38,16 +38,20 @@ jobs:
         python-version: ['3.13', '3.12', '3.11', '3.10']
     steps:
     - uses: actions/checkout@v4
+    - uses: jdx/mise-action@v2
     - uses: actions/setup-python@v5
       with:
         python-version: '${{ matrix.python-version }}'
-    - name: Cache pre-commit environment
-      uses: actions/cache@v4
+    - name: Install poetry
+      uses: abatilo/actions-poetry@v4.0.0
       with:
-        path: ~/.cache/pre-commit
-        key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
+        poetry-version: '1.5.1'
+    - uses: actions/cache@v4
+      with:
+        path: ~/.local/share/virtualenvs
+        key: ${{ runner.os }}-${{ matrix.python-version }}-poetry-${{ hashFiles('poetry.lock') }}
         restore-keys: |
-          pre-commit-${{ runner.os }}-
+          ${{ runner.os }}-poetry-
     - uses: actions/cache@v4
       with:
         path: ~/.local/share/virtualenvs
