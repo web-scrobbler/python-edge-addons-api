@@ -11,14 +11,21 @@ jobs:
     permissions:
       id-token: write
     steps:
-    - uses: actions/checkout@master
-    - uses: actions/setup-python@v5
+    - uses: actions/checkout@v4
+    - uses: jdx/mise-action@v2
+    - name: Cache pre-commit environment
+      uses: actions/cache@v4
       with:
-        python-version: '3.13'
-    - name: Install poetry
-      uses: abatilo/actions-poetry@v4.0.0
+        path: ~/.cache/pre-commit
+        key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
+        restore-keys: |
+          pre-commit-${{ runner.os }}-
+    - uses: actions/cache@v4
       with:
-        poetry-version: '1.5.0'
+        path: ~/.local/share/virtualenvs
+        key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-poetry-
     - name: Install pip dependencies
       run: poetry install
     - name: Package
