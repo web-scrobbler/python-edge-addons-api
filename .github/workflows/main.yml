@@ -42,7 +42,7 @@ jobs:
       with:
         python-version: '${{ matrix.python-version }}'
     - name: Get Poetry version from .mise.toml
-      uses: SebRollen/toml-action@v1.0.2
+      uses: SebRollen/toml-action@v1.2.0
       id: get-poetry-version
       with:
         file: .mise.toml
